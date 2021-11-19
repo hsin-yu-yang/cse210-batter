@@ -13,10 +13,10 @@ from game.audio_service import AudioService
 # from game.brick import Brick
 # from game.ball import Ball
 # from game.paddle import Paddle
-# from game.control_actors_action import ControlActorsAction
-# from game.handle_collisions_action import HandleCollisionsAction
+from game.control_actors_action import ControlActorsAction
+from game.handle_collisions_action import HandleCollisionsAction
 # from game.handle_off_screen_action import HandleOffScreenAction
-# from game.move_actors_action import MoveActorsAction
+from game.move_actors_action import MoveActorsAction
 
 def main():
 
