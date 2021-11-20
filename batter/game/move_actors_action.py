@@ -1,5 +1,5 @@
-from game import constants
 from game.action import Action
+from game import constants
 from game.point import Point
 
 class MoveActorsAction(Action):
@@ -12,6 +12,9 @@ class MoveActorsAction(Action):
         _input_service (InputService): An instance of InputService.
     """
 
+    def __init__(self):
+        super().__init__()
+
     def execute(self, cast):
         """Executes the action using the given actors.
         Args:
@@ -22,7 +25,7 @@ class MoveActorsAction(Action):
                 if not actor.get_velocity().is_zero():
                     self._move_actor(actor)
 
-    def _move_actor(self, actor, get=False):
+    def _move_actor(self, actor):
         """Moves the given actor to its next position according to its 
         velocity. Will wrap the position from one side of the screen to the 
         other when it reaches the edge in either direction.
@@ -33,18 +36,13 @@ class MoveActorsAction(Action):
         position = actor.get_position()
         velocity = actor.get_velocity()
 
-        x1 = position.get_x()
-        y1 = position.get_y()
-        x2 = velocity.get_x()
-        y2 = velocity.get_y()
-        x = 1 + (x1 + x2 - 1) % (constants.MAX_X - 1)
-        y = 1 + (y1 + y2 - 1) % (constants.MAX_Y - 1)
+        x = position.get_x()
+        y = position.get_y()
+        dx = velocity.get_x()
+        dy = velocity.get_y()
+
+        x = (x + dx) % constants.MAX_X
+        y = (y + dy) % constants.MAX_Y
+
         position = Point(x, y)
-        if get:
-            return position
-        else:
-            if actor.get_child():
-                if actor.get_child().get_child():
-                    actor.get_child().get_child().set_position(actor.get_child().get_position())
-                actor.get_child().set_position(actor.get_position())
-            actor.set_position(position)
+        actor.set_position(position)

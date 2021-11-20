@@ -1,34 +1,31 @@
-from game import constants
-from game.action import Action
-from game.point import Point
 
+   
+from game.action import Action
+from game import constants
 
 class ControlActorsAction(Action):
-    """A code template for controlling actors. The responsibility of this
-    class of objects is translate user input into some kind of intent.
+    """Handles controlling the speed of the paddle. The responsibility of 
+    this class of objects is to control the direction and speed of the paddle.
     
     Stereotype:
         Controller
     Attributes:
-        _input_service (InputService): An instance of InputService.
+        input_service: a class which handles the inputs from the user and converts it to data for the program.
     """
-
     def __init__(self, input_service):
-        """The class constructor.
-        
-        Args:
-            input_service (InputService): An instance of InputService.
-        """
+        '''
+        receives input service and converts it into a variable useable to the class.
+        '''
         self._input_service = input_service
 
     def execute(self, cast):
-        """Executes the action using the given actors.
-        Args:
-            cast (dict): The game actors {key: tag, value: list}.
-        """
-       
-        direction = self._input_service.get_direction()      
-        # for i in range(0, 25):
-        paddles = cast["paddle"] # there's only one in the cast
-        for paddle in paddles:
-            paddle.set_x_velocity(direction.get_x() * 5)
+        '''
+        handles updating the paddle from the cast with its velocity and input from the user.
+        attributes:
+            cast: a dictionary which stores all actors in play. 
+        '''
+        direction = self._input_service.get_direction()
+        paddle = cast["paddle"][0]
+        paddle.set_velocity(direction.scale(constants.PADDLE_SPEED))
+
+    

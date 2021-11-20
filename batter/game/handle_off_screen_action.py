@@ -1,36 +1,61 @@
 from game import constants
 from game.action import Action
-from game.point import Point
 from game.audio_service import AudioService
-from game.actor import (Actor)
 
-class HandleOffScreenAction():
-    def __init__(self) -> None:
+class HandleOffScreenAction(Action):
+    """Code template for the rules that govern the interaction of the ball and the game window.
+    
+    Stereotype:
+        Controller
+    Attributes:
+        none
+    """
+    def __init__(self):
         super().__init__()
+    
+
     def execute(self, cast):
-        audio_service = AudioService()
-        end = Actor()
+        '''
+        exectues the functionality of the class, handles calls to check border collisions. 
+        attributes:
+            cast, the collection of all actors in play.
+        
+        '''
         ball = cast["balls"][0]
-        x_pos = ball._position.get_x()
-        y_pos = ball._position.get_y()
-        end_info = []
-        if x_pos >= 775:
-            new_vel = Point(-1 * ball._velocity._x, ball._velocity._y)
-            ball.set_velocity(new_vel)
-        elif x_pos <= 5:
-            new_vel = Point(-1 * ball._velocity._x, ball._velocity._y)
-            ball.set_velocity(new_vel)
-        elif y_pos <= 5:
-            new_vel = Point(ball._velocity._x, ball._velocity._y * -1)
-            ball.set_velocity(new_vel)
-        elif y_pos >= 575:
-            pass
-        paddle = cast["paddle"][0]
-        right_wall = (constants.MAX_X - constants.PADDLE_WIDTH)
-        x_pos = paddle._position.get_x()
-        if x_pos >= (right_wall):
-            new_vel = Point(right_wall, paddle._position._y)
-            paddle.set_position(new_vel)
-        elif x_pos <= 0:
-            new_vel = Point(0, paddle._position._y)
-            paddle.set_position(new_vel)
+
+        # logic statements to determine if the ball has bounced off a surface.
+        if self.check_bounce_horizontal(ball) == True:
+            ball.bounce_horizontal()
+        if self.check_bounce_vertical(ball) == True:
+            ball.bounce_vertical()
+        elif self.check_bounce_vertical(ball) == False:
+            ball.bounce_vertical()
+            cast["balls"].remove(ball)
+
+
+    def check_bounce_horizontal(self, ball):
+        '''
+        checks for an interaction between the balls horizontal edges and the horizontal edges of the game window.
+        attributes:
+            ball, an instance of a ball actor
+        '''
+        if ball.get_left_edge() <= 0 or ball.get_right_edge() >= constants.MAX_X:
+            audio_service = AudioService()
+            audio_service.play_sound(constants.SOUND_BOUNCE)
+            return True
+            
+        
+
+    def check_bounce_vertical(self, ball):
+        '''
+        handles checking for an interaction between the ball and the game window on the vertical axis.
+        attributes:
+            ball, an instance of a ball actor
+        '''
+        audio_service = AudioService()
+        if ball.get_top_edge() <= 0:
+            audio_service.play_sound(constants.SOUND_BOUNCE)
+            return True
+        elif ball.get_bottom_edge() >= constants.MAX_Y:
+            audio_service.play_sound(constants.SOUND_BOUNCE)
+            return False

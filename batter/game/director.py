@@ -1,6 +1,6 @@
 from time import sleep
 
-import raylibpy
+import pyray
 from game import constants
 
 class Director:
@@ -9,7 +9,6 @@ class Director:
     
     Stereotype:
         Controller
-
     Attributes:
         _cast (dictionary): The game actors {key: name, value: object}
         _script (dictionary): The game actions {key: tag, value: object}
@@ -33,13 +32,17 @@ class Director:
             self._cue_action("update")
             self._cue_action("output")
 
-            # TODO: Add some logic like the following to handle game over conditions
-            # if len(self._cast["balls"]) == 0:
-            #     # Game over
-            #     self._keep_playing = False
-
-            if raylibpy.window_should_close():
+            if len(self._cast["bricks"]) == 0:
+                print(f"\nA winner is you!")
                 self._keep_playing = False
+            
+            if len(self._cast["balls"]) == 0:
+                print("You are loser!")
+                self._keep_playing = False
+
+            if pyray.window_should_close():
+                self._keep_playing = False
+                print(f"\nYou are quitter. ")
 
 
     def _cue_action(self, tag):
